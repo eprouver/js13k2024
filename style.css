@@ -2,25 +2,50 @@
   margin: 0;
   padding: 0;
   box-size: border-box;
+  color: white;
 }
 
 body {
   background: black;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
-.parent {
+.board {
 display: grid;
 grid-template-columns: 3fr 1fr;
-grid-template-rows: 1fr 5fr;
+grid-template-rows: 1fr 10fr;
   height: 100vh;
   width: 100vw;
 }
 
-.div1 { grid-area: 1 / 1 / 3 / 2; }
-.div2 { grid-area: 1 / 2 / 3 / 3; }
-.div3 { grid-area: 1 / 1 / 2 / 2; }
+.board .div1 { grid-area: 1 / 1 / 3 / 2; }
+.board .div2 { grid-area: 1 / 2 / 3 / 3; }
+.board .div3 { grid-area: 1 / 1 / 2 / 2; }
 
-.grid__item {
+.board .grid__item {
    position: relative;
   box-shadow: inset 0 0 2px 2px #ccc;
+}
+
+.town, .board {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.face {
+  position:absolute;
+  height: 1em;
+  line-height: 1em;
+  margin-top: 1em;
+  transition: all 5s ease;
+}
+
+.character {
+    transition: top 1s ease-in-out, transform 2s ease-in-out, filter 1s ease-in-out;
+    transform-origin: 50% 110%;
+  mask-image: linear-gradient(to bottom, black 80%, transparent 98%)
 }

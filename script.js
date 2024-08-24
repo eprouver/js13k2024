@@ -546,7 +546,6 @@ const reposition = () => {
   });
 }
 
-setInterval( reposition, 100000);
 
 /* spells */
 const spells = div({id: "spells", class: "grid__item"});
@@ -794,7 +793,7 @@ const makeBoard = (holder) => {
               onclick: (e) => {
                 holder.style.pointerEvents = 'none';
                 const index = ~~(Math.random() * icons.length);
-                let cont = Math.random() < 0.05 * (appearanceOf13 / pacing) && round > 0 ? "13" : icons[index];
+                let cont = Math.random() < 0.13 * (appearanceOf13 / pacing) && round > 0 ? "13" : icons[index];
                 if (e.target.children.length === 0) {
                   e.target.appendChild(
                     div({ class: "cont", style: `opacity: ${(pacing / 2400)}` }, div({style: cont === '13'? '' : `transform: scale(1.2); filter: url(#disp-${index})`},cont))
@@ -1065,4 +1064,7 @@ setTimeout(() => {
  const hideStarter = () => {
   document.querySelector('.starter').remove();
  }
+
+ setInterval( reposition, 100000);
+setInterval(reporter, 140000)
 

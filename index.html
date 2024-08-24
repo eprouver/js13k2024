@@ -7,9 +7,27 @@
 
 </head>
 <body>
-<!-- partial:index.partial.html -->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs >
+      <filter id="squig">
+        <feTurbulence id="turbulence" baseFrequency="0.01" numOctaves="10" result="noise" seed="0"/>
+        <feDisplacementMap id="displacement" in="SourceGraphic" in2="noise" scale="3" />
+      </filter>
 
-<!-- partial -->
+            <animate 
+      xlink:href="#turbulence"
+      attributeName="seed"
+      from="1"
+      to="10"
+      dur="4s"
+      fill="freeze"
+      repeatCount="indefinite"/>
+</defs>
+<defs id="defs">
+
+    </defs>
+  </svg>
+
   <script  src="./script.js"></script>
 
 </body>

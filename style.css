@@ -293,7 +293,7 @@ grid-template-rows: 1fr 10fr;
   padding: 1.5em 2.5em 1.6em 2em;
   top: 36vh;
   right: 16vw;
-  font-size: 3.2vw;
+  font-size: 2.2vw;
   cursor: pointer;
   background: #343434;
   clip-path: polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%, 60% 100%, 60% 80%, 0% 80%);
@@ -371,6 +371,7 @@ grid-template-rows: 1fr 10fr;
   transform-origin: bottom;
   pointer-events: none;
   width: 100%;
+  font-size: 1.2em;
 }
 
 .flip .cont {
@@ -480,13 +481,24 @@ grid-template-rows: 1fr 10fr;
   transition: 0.5s ease all;
   overflow: hidden;
   position: relative;
-  border-radius: 10px;
-  text-shadow: 2px 1px 1px black;
+  border-radius: 20px;
+  text-shadow: 2px 1px 3px #444;
   transition: all 0.5s ease;
+  border: 5px solid #555;
+  filter: url(#squig);
+}
+
+.c-cho .smudge {
+  z-index: 1;
+  position: absolute; top: 0; left: 0;
+  filter: url(#disp-1);
+  opacity: 0.15;
+  font-size: 12vw;
+  transform: scale(5);
 }
 
 .c-cho:hover {
-  text-shadow: -2px 2px 1px black;
+  text-shadow: -2px 2px 3px #444;
 }
 
 .c-cho div {
@@ -534,11 +546,16 @@ grid-template-rows: 1fr 10fr;
 }
 
 .face.reporter:before {
-  content: attr(speak);
-  font-size: 0.1em;
+  content: attr(data-speak);
+  line-height: 1em;
+  padding: 0.7em;
+  font-size: 0.09em;
   position: absolute;
-  top: 0;
-  left: 100%;
-  width: 100vw;
+  top: 3em;
+  left: 86%;
+  width: 5vw;
+  background: #444;
+  text-align: center;
+  border-radius: 3em 2em 2em 20%;
 }
 

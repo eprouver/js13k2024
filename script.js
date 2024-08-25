@@ -20,15 +20,14 @@ const {div, canvas, span} = van.tags;
 let playing = true;
 let pacing = 1000;
 let timeouts = [];
-const reducePacing = 0.95;
-const increasePacing = 1.3;
 let round = 0;
+let appearanceOf13 = 0.1;
+
+
+const reducePacing = 0.9;
+const increasePacing = 1.3;
 const startingMood = 3;
-const appearanceOf13 = 1800;
-const failRebound = 1.5;
 const helpPacing = 1.1;
-
-
 
 const warningSound = [1.1,,136,.01,.05,.05,3,2.4,-2,-97,,,,,66,,.11,.76,.02,,-682];
 const ouchSound = [,,186,,.2,.06,,,-3,8,,,,,,.1,,.63,.04];
@@ -319,7 +318,7 @@ return paragraphs;
 
 /* Towny custom element */
 
-const scale = ["💀", "😱", "😨", "😞", "😟", "😕", "😐", "🙂", "😃"];
+const scale = ["💀", "😱", "😨", "😞", "😟", "😕", "😐", "🙂", "😇"];
 
 const randBet = (min, max) => Math.random() * max + min;
 const randStyle = () => {
@@ -509,8 +508,12 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
           pacing *= 1.1;
           document.getElementById(a.id).classList.add('hide');
         }
-      }, 750)
+      }, a.mood <= 0? 2000: 750)
     }, 620);
+
+    if (a.mood <= 1) {
+    reporterfn();
+    }
   }
 
   a.towny = towny;
@@ -622,6 +625,7 @@ const hpHolder = div({id: 'hp', class: "score grid__item"});
 
 const makeCards = (holder) => {
   round += 1;
+  appearanceOf13 += 0.005;
   van.add(holder, div({id: "choices"},
   div({id: "rando", class: "c-cho", onclick: () => {
     /* Rando select help collected number */
@@ -648,6 +652,7 @@ const makeCards = (holder) => {
     div(
       "People",
     ),
+    div({class: 'smudge', style: `filter: url(#disp-${~~(Math.random() * icons.length)}) grayscale(1)`}, "✨")
   ),
   ~~(collected / 2) > 0 ? div({id: "picker", class: "c-cho", onclick: () => {
     /* user select */
@@ -688,6 +693,7 @@ const makeCards = (holder) => {
     div(
       "People",
     ),
+    div({class: 'smudge', style: `filter: url(#disp-${~~(Math.random() * icons.length)}) grayscale(1)`}, "✨")
   ): '',
 
   Math.random() > 0.25 && pacing < 500 ?  div({id: "rando", class: "c-cho", onclick: () => {
@@ -709,7 +715,8 @@ const makeCards = (holder) => {
   div({class: "gig"},
     '&'
   ),
-  div("Increase Help")
+  div("Increase Help"),
+  div({class: 'smudge', style: `filter: url(#disp-${~~(Math.random() * icons.length)}) grayscale(1)`}, "✨")
 ) : '' )) };
 
 const makeHP = () => {
@@ -754,7 +761,7 @@ const makeSmudge = () => {
     // Create the <feDisplacementMap> element
     const feDisplacementMap = document.createElementNS(svgNS, "feDisplacementMap");
     feDisplacementMap.setAttribute("in", "SourceGraphic");
-    feDisplacementMap.setAttribute("scale", "70");
+    feDisplacementMap.setAttribute("scale", "100");
     
     // Append <feTurbulence> and <feDisplacementMap> to the <filter> element
     filter.appendChild(feTurbulence);
@@ -793,7 +800,7 @@ const makeBoard = (holder) => {
               onclick: (e) => {
                 holder.style.pointerEvents = 'none';
                 const index = ~~(Math.random() * icons.length);
-                let cont = Math.random() < 0.13 * (appearanceOf13 / pacing) && round > 0 ? "13" : icons[index];
+                let cont = Math.random() < appearanceOf13 && round > 0 ? "13" : icons[index];
                 if (e.target.children.length === 0) {
                   e.target.appendChild(
                     div({ class: "cont", style: `opacity: ${(pacing / 2400)}` }, div({style: cont === '13'? '' : `transform: scale(1.2); filter: url(#disp-${index})`},cont))
@@ -896,9 +903,8 @@ const makeClock = (holder, pace = 1300) => {
                 playing = false;
                 hexHolder.innerHTML = '';
                 speak('time is up');
-                pacing *= pacing * helpPacing;
+                pacing *= helpPacing;
                 const hurters = 3 + ~~(Math.random() * 6);
-                pacing *= failRebound;
                 townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, hurters).forEach(a => setTimeout(a.hurt, ~~(Math.random() * 600)));
                 zzfx(...[0.0002,0,298,.13,1,,,.7,,-1,-44,.05,.2,,,,.3,,.01,8000]);
                 [...document.querySelectorAll('.cl-arrow')].forEach(a => a.remove());
@@ -931,7 +937,7 @@ const instruction = () => {
   spells.classList.add('active');
 
   const instructions = [
-    'Match at least two pairs to heal our people.',
+    'Flip the hexagons and make at least two pairs to heal our people.',
     'Finding "13" causes harm.',
     'Click "Healing Pairs" before a spider makes it back up top.',
     "...or healing is lost."
@@ -950,7 +956,7 @@ const instruction = () => {
   };
 
   speakAndActivate(oneDiv, instructions[0], 0);
-  speakAndActivate(twoDiv, instructions[1], 2200);
+  speakAndActivate(twoDiv, instructions[1], 2600);
   setTimeout(() => zzfx(...ouchSound), 3200);
   setTimeout(() => makeBoard(hexHolder), 3200);
   speakAndActivate(threeDiv, instructions[2], 5000);
@@ -1016,11 +1022,29 @@ van.add(document.body, div({class: "board"},
   spells,
 ), starter);
 
+let accepting = true;
+const reporterfn = (force) => {
+  if (!accepting) {
+    return;
+  }
+  accepting = false;
+  setTimeout(() => {accepting = true}, 2000);
+  const focus = townys.filter(a => a.mood > 0).sort((a, b) => a.mood - b.mood).slice(0, 3).sort(() => Math.random() - 0.5)[0];
+  if (!force) {
+    if (round < 2) { 
+      setTimeout(reporterfn, 15000);
+      return;
+    } else {
+      setTimeout(reporterfn, Math.random() * 150 * pacing * 20);
+    }
+  
+    if (focus.mood <= 0) {
+      return;
+    }
+  
+  }
 
-const reporter = () => {
-  const tops = townys.sort((a, b) => b.mood - a.mood).slice(0, 4).sort(() => Math.random() - 0.5);
-  const bottom = townys.sort((a, b) => a.mood - b.mood).slice(0, 2).sort(() => Math.random() - 0.5);
-  const reporter = document.getElementById(tops.pop().id);
+  const reporter = document.getElementById(focus.id);
   const ostyle = {};
   ostyle.transform = reporter.style.transform;
   ostyle.zIndex = reporter.style.zIndex;
@@ -1032,33 +1056,35 @@ const reporter = () => {
 reporter.style.transform = "translateY(120vh) scale(3.2)";
 reporter.style.zIndex = "99999999";
 reporter.style.filter = "blur(0px)";
+reporter.style.pointerEvents  = 'none';
 
 setTimeout(() => {
   reporter.classList.add('reporter');
-  reporter.style = `font-size: 7vw;
+  reporter.style = `font-size: 5vw;
     z-index: 9999;
     left: 1.5em;
     margin-top: 0;
     filter: blur(0px);
     transition: all 0.3s ease;
-    transform: translateY(72vh) scale(4.2);`;
+    transform: translateY(78vh) scale(4.2);`;
 
-
-    reporter.setAttribute('speak', `I'm worried about ${bottom[0].name}`);
+    reporter.setAttribute('data-speak', `I'm worried about ${focus.name}`);
 
 
   setTimeout(() => {
     // every key of ostyle return to the original value
     reporter.setAttribute('speak', '');
+    reporter.setAttribute('data-speak', '');
+    reporter.classList.remove('reporter');
     reporter.style.transform = ostyle.transform;
     reporter.style.zIndex = ostyle.zIndex;
     reporter.style.filter = ostyle.filter;
     reporter.style.marginTop = ostyle.marginTop;
     reporter.style.left = ostyle.left;
     reporter.style.fontSize = ostyle.fontSize;
-  }, 5000);
+  }, 2000);
 });
-
+return reporter;
 }
 
  const hideStarter = () => {
@@ -1066,5 +1092,4 @@ setTimeout(() => {
  }
 
  setInterval( reposition, 100000);
-setInterval(reporter, 140000)
 

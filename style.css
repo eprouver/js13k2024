@@ -327,7 +327,8 @@ grid-template-rows: 1fr 10fr;
 }
 
 .land svg {
-  height: 90vh;
+  width: 100vw;
+  height: 100vh;
 }
 
 /* end starter */

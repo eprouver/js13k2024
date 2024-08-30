@@ -1069,7 +1069,9 @@ const instruction = () => {
   houseLine.innerHTML = '';
   sortHouses.forEach(a => houseLine.appendChild(a));
   const land = div({class: "land"});
-  land.innerHTML = `<svg viewBox="0 0 1440 320"><path fill="#474747" d="m0 192 60 5c60 6 180 16 300 16s240-10 360-21 240-21 360-21 240 10 300 16l60 5v128H0Z"/></svg>`;
+  land.innerHTML = `<svg preserveAspectRatio="none" viewBox="0 0 100 100"><path fill="#474747"  d="M40 67c22 4 51-1 51-1s14 0 14-5l-2 42H-5V61c-1-3 22 2 45 6z" /></svg>`;
+
+
 
   const starter = div({class: "starter"},
     div({class: "title"}, "The Lonely 13."),

@@ -14,6 +14,8 @@ body {
 }
 
 body, html, .board, .starter {
+  min-height: -webkit-fill-available;
+  height: 100dvh;
   overflow: hidden;
 }
 

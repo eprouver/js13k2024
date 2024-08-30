@@ -236,6 +236,10 @@ enVoices = window.speechSynthesis.getVoices();
 }
 incVoices = incVoices.filter((voice) => ["sk-SK"].indexOf(voice.lang) > -1);
 enVoices = enVoices.filter((voice) => ["en-IN"].indexOf(voice.lang) > -1);
+
+if (enVoices.length === 0) {
+  enVoices = window.speechSynthesis.getVoices();
+}
 })();
 
 function speak(text, inc = false) {
@@ -843,7 +847,7 @@ const makeSmudge = () => {
     // Create the <feDisplacementMap> element
     const feDisplacementMap = document.createElementNS(svgNS, "feDisplacementMap");
     feDisplacementMap.setAttribute("in", "SourceGraphic");
-    feDisplacementMap.setAttribute("scale", "100");
+    feDisplacementMap.setAttribute("scale", "50");
     
     // Append <feTurbulence> and <feDisplacementMap> to the <filter> element
     filter.appendChild(feTurbulence);

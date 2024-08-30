@@ -18,7 +18,7 @@ body, html, .board, .starter {
   height: 100dvh;
   width: 100vw;
   overflow: hidden;
-  position: fixed;
+  position: sticky;
   top: 0;
 }
 
@@ -274,7 +274,7 @@ grid-template-rows: 1fr 10fr;
   transition: all 1s ease;
   filter: url(#squig);
   top: 0;
-  transform: scale(1);
+  transform: scale(1.01);
   cursor: pointer;
 }
 

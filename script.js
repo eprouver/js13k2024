@@ -61,7 +61,7 @@ let hint = 0;
 let appearanceOf13 = 0.1;
 
 
-const reducePacing = 0.7; /* reduce the total round time */
+const reducePacing = 0.75; /* reduce the total round time */
 const increasePacing = 1.2; /* benefit from increase */
 const startingMood = 2;
 const helpPacing = 1.2; /* pacing change after time is up */

@@ -16,17 +16,35 @@ H++),g+=x+x*E*Z(a**5),n&&++n>z&&(b+=v,C+=v,n=0),!l||++I%l||(b=C,u=G,n=n||1);p=zz
 createBuffer(1,h,R);p.getChannelData(0).set(k);b=zzfxX.createBufferSource();
 b.buffer=p;b.connect(zzfxX.destination);b.start()}
 
+a=(notes,center,duration,decaystart,decayduration,interval,volume,waveform,i)=>{
+  with(A=new AudioContext)
+    with(G=createGain())
+      for(i of notes){
+        with(O=createOscillator()){
+          connect(G),
+          G.connect(destination),
+          start(i[0]*interval),
+          frequency.setValueAtTime(center*1.06**(13-i[1]),i[0]*interval),
+          type=waveform,
+          gain.setValueAtTime(volume/4,i[0]*interval),
+          gain.setTargetAtTime(1e-5,i[0]*interval+decaystart,decayduration),
+          stop(i[0]*interval+duration);
+        }
+     }
+}
+
 const {div, canvas, span} = van.tags;
 let playing = true;
 let pacing = 1000;
 let timeouts = [];
 let round = 0;
+let hint = 0;
 let appearanceOf13 = 0.1;
 
 
 const reducePacing = 0.9;
 const increasePacing = 1.3;
-const startingMood = 3;
+const startingMood = 2;
 const helpPacing = 1.1;
 
 const warningSound = [1.1,,136,.01,.05,.05,3,2.4,-2,-97,,,,,66,,.11,.76,.02,,-682];
@@ -213,13 +231,14 @@ enVoices = enVoices.filter((voice) => ["en-IN"].indexOf(voice.lang) > -1);
 })();
 
 function speak(text, inc = false) {
-voice = inc ? incVoices[0]: enVoices[1] || enVoices[0];
-const utterance = new SpeechSynthesisUtterance(text);
-utterance.lang = "sk";
-utterance.pitch = 0.05;
-utterance.voice = voice;
-window.speechSynthesis.speak(utterance, true);
-return text;
+  window.speechSynthesis.cancel();
+  voice = inc ? incVoices[0]: enVoices[1] || enVoices[0];
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "sk";
+  utterance.pitch = 0.05;
+  utterance.voice = voice;
+  window.speechSynthesis.speak(utterance, true);
+  return text;
 }
 
 function incantation(text) {
@@ -353,14 +372,14 @@ const femaleNames = [
   'Shirley',
   'Layla',
   'Samantha',
-  'Zoey'
+  'Sydney'
 ];
 
 const maleNames = [
   'Liam',
   'Noah',
   'Oliver',
-  'Elijah',
+  'Tim',
   'James',
   'William',
   'Benjamin',
@@ -498,7 +517,7 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
       towny.innerHTML = '';
       towny.appendChild(descrip());
 
-      const extra = ["I'm sorry, rest in peace my friend.", 'We lost one.', 'We will remember you.', "I'll always remember my friend"];
+      const extra = ["I'm sorry, rest in peace my friend.", 'We will remember you.', "I'll always remember my friend"];
 
       setTimeout(() => {
         towny.style.background = a.mood === 1 ? 'red' : a.mood === 0 ? '#333' : '';
@@ -508,12 +527,17 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
           pacing *= 1.1;
           document.getElementById(a.id).classList.add('hide');
         }
+
+        if (townys.filter(a => a.mood > 0).length === 0) {
+          ending();
+        } else if (a.mood <= 1) {
+          reporterfn();
+        }
+
       }, a.mood <= 0? 2000: 750)
     }, 620);
 
-    if (a.mood <= 1) {
-    reporterfn();
-    }
+
   }
 
   a.towny = towny;
@@ -618,14 +642,46 @@ const startSpell = (callBack) => {
   }, 8000);
 };
 
-
 let collected = 0;
 const hexHolder = div({class: "gameBoard grid__item"});
-const hpHolder = div({id: 'hp', class: "score grid__item"});
+const hpHolder = div({id: 'hp', class: "score grid__item", turnsLeft: '13'});
+
+const ending = () => {  
+  timeouts.forEach(a => clearTimeout(a));
+  window.speechSynthesis.cancel();
+  hexHolder.innerHTML = '';
+  hpHolder.innerHTML = '';
+  hpHolder.setAttribute('turnsLeft', '');
+  const survive = townys.filter(a => a.mood > 0).length;
+  document.body.onclick = () => location.reload()
+
+  if (survive === 0) {
+    // Sad ending
+    const msg = 'The 13 have perished.';
+    van.add(hexHolder, div({class: 'ending'},msg));
+    speak(msg);
+  } else {
+    // Happy ending
+    const msg = `${survive} survived.`;
+    van.add(hexHolder, div({class: 'ending'},msg));
+    speak(msg);
+    hexHolder.classList.add('ending');
+
+    const twinkle = () => {
+      a([[4,19],[5,15],[4,7],[5,3],[6,2],[8,19],[9,15],[8,7],[9,3],[10,2],[16,19],[17,15],[16,7],[17,3],[18,2],[20,19],[21,15],[22,14],[20,7],[21,3],[22,2],[28,19],[29,15],[30,14],[28,7],[29,3],[30,2],[32,19],[33,15],[34,14],[32,7],[33,3],[34,2],[40,19],[41,15],[42,14],[41,3],[44,19],[45,15],[46,14],[45,3],[40,2],[42,7],[44,2],[46,7],[7,15],[19,15],[31,15],[6,14],[18,14],[3,9],[15,9],[27,9],[10,14]],1200,.20,0,.2,.2,.1,'sine');
+  a([[0,17],[0,14],[0,10],[4,17],[4,14],[4,9],[8,19],[8,14],[8,10],[12,19],[12,15],[12,12],[7,9],[7,14],[7,17],[3,10],[3,14],[3,17]],800,2,1,.25,.6,.1,'sine');
+  };
+    twinkle();
+    [...document.getElementsByClassName('face')].forEach(face => face.style.filter = 'contrast(1.2) brightness(0.7) grayscale(0.5) blur(1px)');
+    setInterval(twinkle, 9600);
+  }
+}
+
 
 const makeCards = (holder) => {
   round += 1;
-  appearanceOf13 += 0.005;
+  hint += 1;
+  appearanceOf13 += 0.02;
   van.add(holder, div({id: "choices"},
   div({id: "rando", class: "c-cho", onclick: () => {
     /* Rando select help collected number */
@@ -638,8 +694,13 @@ const makeCards = (holder) => {
       randos.forEach(a => setTimeout(a.heal, ~~(Math.random() * 1500)));
 
       setTimeout(() => {
-        makeBoard(hexHolder);
-        makeClock(hexHolder,  pacing);
+        hpHolder.setAttribute('turnsLeft', 13 - round);
+        if (round > 0 && townys.filter(a => a.mood > 0).length > 0) {
+          makeBoard(hexHolder);
+          makeClock(hexHolder,  pacing);
+        } else {
+          setTimeout(ending, 2000);
+        }
       }, 1000);
     }, 1000);
   }},
@@ -675,8 +736,13 @@ const makeCards = (holder) => {
           townys.forEach(a => a.towny.onclick = null);
 
           setTimeout(() => {
-            makeBoard(hexHolder);
-            makeClock(hexHolder,  pacing);
+            hpHolder.setAttribute('turnsLeft', 13 - round);
+            if (round > 0 && townys.filter(a => a.mood > 0).length > 0) {
+              makeBoard(hexHolder);
+              makeClock(hexHolder,  pacing);
+            } else {
+              ending();
+            }
           }, 1000);
         }
       };
@@ -696,33 +762,35 @@ const makeCards = (holder) => {
     div({class: 'smudge', style: `filter: url(#disp-${~~(Math.random() * icons.length)}) grayscale(1)`}, "✨")
   ): '',
 
-  Math.random() > 0.25 && pacing < 500 ?  div({id: "rando", class: "c-cho", onclick: () => {
+  round > 3 && round % 2 == 0 ?  div({id: "rando", class: "c-cho", onclick: () => {
     /* Increase help */
     speak('increase', true);
-
+    hint = 2;
     pacing *= increasePacing;
+    appearanceOf13 *= 0.9;
     holder.innerHTML = '';
     hpHolder.innerHTML = '';
     setTimeout(() => {
+      hpHolder.setAttribute('turnsLeft', 13 - round);
       zzfx(...[,,1623,.01,,.17,,.5,,1,459,.07,,,,,,.84,.02]); 
       makeBoard(hexHolder);
       makeClock(hexHolder,  pacing);
     }, 1000);
   }},
   div(
-    "Reduce Speed",
+    "More Time",
   ),
   div({class: "gig"},
     '&'
   ),
-  div("Increase Help"),
+  div("More Help"),
   div({class: 'smudge', style: `filter: url(#disp-${~~(Math.random() * icons.length)}) grayscale(1)`}, "✨")
 ) : '' )) };
 
 const makeHP = () => {
   const pairs = span({id: 'h-pair'}, collected);
   hpHolder.innerHTML = '';
-  hpHolder.appendChild(div({id: 'h-arr',
+  hpHolder.appendChild(div({id: 'h-arr', class:  collected >= 2 ? 'ok': '',
     onclick: () => {
       if (collected < 2) {
         return;
@@ -730,7 +798,6 @@ const makeHP = () => {
       zzfx(...ouchSound);
       hexHolder.innerHTML = '';
       hpHolder.innerHTML = `You collected ${collected} pairs.`;
-      console.log('entered');
       playing = false;
       timeouts.forEach(a => clearTimeout(a));
 
@@ -803,7 +870,7 @@ const makeBoard = (holder) => {
                 let cont = Math.random() < appearanceOf13 && round > 0 ? "13" : icons[index];
                 if (e.target.children.length === 0) {
                   e.target.appendChild(
-                    div({ class: "cont", style: `opacity: ${(pacing / 2400)}` }, div({style: cont === '13'? '' : `transform: scale(1.2); filter: url(#disp-${index})`},cont))
+                    div({ class: "cont", style: `opacity: ${(Math.max(0, (6 - hint)/15) )}` }, div({style: cont === '13'? '' : `transform: scale(1); filter: url(#disp-${index})`},cont))
                   );
                 } else {
                   cont = e.target.children[0].innerText;
@@ -811,12 +878,12 @@ const makeBoard = (holder) => {
 
                 setTimeout(
                   () => {
-                    if (cont === "13") {
+                    if (cont === '13') {
                       speak('chekona.', true)
                       setTimeout(() => { 
                         /* ouch */
                         zzfx(...ouchSound);
-                        townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, ~~(Math.random() * 3) + 1).forEach(a => setTimeout(a.hurt, ~~(Math.random() * 600)));
+                        townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, ~~(Math.random() * 3) + 1).forEach(a => timeouts.push(setTimeout(a.hurt, ~~(Math.random() * 600))));
                         e.target.classList.add('hide');
                         holder.style.pointerEvents = 'auto';
                       }, 700);
@@ -940,7 +1007,7 @@ const instruction = () => {
     'Flip the hexagons and make at least two pairs to heal our people.',
     'Finding "13" causes harm.',
     'Click "Healing Pairs" before a spider makes it back up top.',
-    "...or healing is lost."
+    "Survive 13 quick rounds."
   ];
 
   const divs = instructions.map(text => div({ class: "inst" }, text));
@@ -956,16 +1023,16 @@ const instruction = () => {
   };
 
   speakAndActivate(oneDiv, instructions[0], 0);
-  speakAndActivate(twoDiv, instructions[1], 2600);
-  setTimeout(() => zzfx(...ouchSound), 3200);
-  setTimeout(() => makeBoard(hexHolder), 3200);
-  speakAndActivate(threeDiv, instructions[2], 5000);
+  speakAndActivate(twoDiv, instructions[1], 3000);
+  setTimeout(() => zzfx(...ouchSound), 3600);
+  setTimeout(() => makeBoard(hexHolder), 3600);
+  speakAndActivate(threeDiv, instructions[2], 5400);
 
   [...new Array(3)].forEach((_, i) => {
     setTimeout(() => zzfx(...warningSound), 7000 + i * 400);
   });
 
-  speakAndActivate(fourDiv, instructions[3], 8800);
+  speakAndActivate(fourDiv, instructions[3], 9200);
 
   setTimeout(() => {
     spells.innerHTML = '';
@@ -973,7 +1040,7 @@ const instruction = () => {
     makeClock(hexHolder, pacing);
     zzfx(...[0.0002, 0, 298, .13, 1, , , .7, , -1, -44, .05, .2, , , , .3, , .01, 8000]);
     document.body.style.pointerEvents = 'auto';
-  }, 10600);
+  }, 11000);
 };
 
 
@@ -1045,6 +1112,7 @@ const reporterfn = (force) => {
   }
 
   const reporter = document.getElementById(focus.id);
+  if (!reporter) return;
   const ostyle = {};
   ostyle.transform = reporter.style.transform;
   ostyle.zIndex = reporter.style.zIndex;

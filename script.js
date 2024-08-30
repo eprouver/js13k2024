@@ -553,9 +553,13 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
 }); 
 
 setInterval(() => {
-  const face = [...document.getElementsByClassName("face")].sort(
+  let face = [...document.getElementsByClassName("face")].sort(
     () => Math.random() - 0.5
-  )[0].children[0];
+  )[0]
+
+  if (!face) return;
+  
+  face = face.children[0];
 
   face.style.transform = "rotate(-3deg)";
   setTimeout(() => {
@@ -591,7 +595,7 @@ const startSpell = (callBack) => {
   let text = document.createElement("div");
   text.classList.add("fate");
   const seed = collected;
-  speak("help " + collected);
+  speak("help " + Math.min(townys.filter(a => a.mood > 0).length, collected));
 
   text.appendChild(generateTextFromArray(seed));
   spells.appendChild(text);
@@ -713,7 +717,7 @@ const makeCards = (holder) => {
     }, 1000);
   }},
     div(
-      "Random",
+      randos.length < collected ? "Remaining" : "Random",
     ),
     div({class: "gig"},
       randos.length,
@@ -981,6 +985,7 @@ const makeClock = (holder, pace = 1300) => {
                 timeouts.forEach(a => clearTimeout(a));
                 playing = false;
                 hexHolder.innerHTML = '';
+                document.getElementById('h-arr').remove();
                 speak('time is up');
                 pacing *= helpPacing;
                 const hurters = 7 + ~~(Math.random() * 5);

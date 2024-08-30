@@ -120,7 +120,7 @@ grid-template-rows: 1fr 10fr;
 }
 
 .character {
-  transition: top 1s ease-in-out, transform 2s ease-in-out, filter 1s ease-in-out;
+  transition: top 1s ease-in-out, transform 2s ease-in-out, filter 0.1s ease-in-out;
   transform-origin: 50% 110%;
   mask-image: linear-gradient(to bottom, black 80%, transparent 98%);
   padding-top: 0.1em;

@@ -19,7 +19,7 @@ body, html, .board, .starter {
   width: 100vw;
   overflow: hidden;
   position: absolute;
-  top: 0;
+  top: env(safe-area-inset-top);
   left: 0;
 }
 

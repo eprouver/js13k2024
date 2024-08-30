@@ -6,8 +6,6 @@
   font-family: georgia;
 }
 
-
-
 body {
   background: linear-gradient(359deg, black, #4b4b4b);
   height: 100vh;
@@ -16,8 +14,6 @@ body {
 }
 
 body, html, .board, .starter {
-  min-height: -webkit-fill-available;
-  height: 100dvh;
   overflow: hidden;
 }
 
@@ -36,7 +32,6 @@ body, html, .board, .starter {
 display: grid;
 grid-template-columns: 4fr 1fr;
 grid-template-rows: 1fr 10fr;
-  height: 100vh;
   width: 100vw;
 }
 
@@ -126,7 +121,6 @@ grid-template-rows: 1fr 10fr;
 }
 
 .towny {
-  margin: 5px;
   padding: 2px;
   box-shadow: inset 0 0 10px #000;
   background: #555;
@@ -188,7 +182,7 @@ grid-template-rows: 1fr 10fr;
 }
 
 .vis {
-  font-size: 5vh;
+  font-size: 4.8vh;
   position: relative;
 }
 
@@ -200,10 +194,14 @@ grid-template-rows: 1fr 10fr;
 }
 
 .town-list {
-  height: 100%;
+  height: 100vh;
   overflow: scroll;
   filter: saturate(0.25);
   box-shadow: inset 0 0 30vw #cccc;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px;
 }
 
 

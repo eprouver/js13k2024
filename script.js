@@ -240,7 +240,7 @@ enVoices = enVoices.filter((voice) => ["en-IN"].indexOf(voice.lang) > -1);
 
 function speak(text, inc = false) {
   window.speechSynthesis.cancel();
-  voice = inc ? incVoices[0]: enVoices[1] || window.speechSynthesis.getVoices()[0];
+  voice = inc ? incVoices[0] : enVoices[1] || enVoices[0] || window.speechSynthesis.getVoices()[0];
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "sk";
   utterance.pitch = 0.05;

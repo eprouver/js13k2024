@@ -16,7 +16,10 @@ body {
 body, html, .board, .starter {
   min-height: -webkit-fill-available;
   height: 100dvh;
+  width: 100vw;
   overflow: hidden;
+  position: fixed;
+  top: 0;
 }
 
 #noise {

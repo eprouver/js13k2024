@@ -42,10 +42,10 @@ let hint = 0;
 let appearanceOf13 = 0.1;
 
 
-const reducePacing = 0.9;
-const increasePacing = 1.3;
+const reducePacing = 0.8; /* reduce the total round time */
+const increasePacing = 1.2; /* benefit from increase */
 const startingMood = 2;
-const helpPacing = 1.1;
+const helpPacing = 1.2; /* pacing change after time is up */
 
 const warningSound = [1.1,,136,.01,.05,.05,3,2.4,-2,-97,,,,,66,,.11,.76,.02,,-682];
 const ouchSound = [,,186,,.2,.06,,,-3,8,,,,,,.1,,.63,.04];
@@ -90,6 +90,7 @@ const ouchSound = [,,186,,.2,.06,,,-3,8,,,,,,.1,,.63,.04];
   setInterval(generateNoise, n);
 })();
 
+const bgst = [];
 const bgs = () => {
   const clicks = () => {
   const total = 1200 + Math.random() * 1000;
@@ -121,10 +122,10 @@ const bgs = () => {
     }, total * Math.sin(i / 10));
   }
 
-  setTimeout(clicks, Math.random() * 10000);
-  setTimeout(() => {
+  bgst.push(setTimeout(clicks, Math.random() * 10000));
+  bgst.push(setTimeout(() => {
     zzfx(...[0.5, 0, 1503, 0.01, 0.2, 0.09, , , , , , , , , 0.2, , 0.52, 0.74]);
-  }, Math.random() * 10000);
+  }, Math.random() * 10000));
 };
 
   clicks();
@@ -158,11 +159,11 @@ const bgs = () => {
 let note = 0;
 const notes = [350, 370, 410, 390];
 
-setInterval(() => {
+const a = () => {
   const up = Math.random() > 0.5 ? 1 : -1;
   zzfx(
     ...[
-      0.5,
+      0.35,
       0,
       notes[note],
       0.03,
@@ -187,11 +188,18 @@ setInterval(() => {
   );
   note += 1;
   if (note > notes.length) note = 0;
-}, 10000);
 
-setInterval(() => {
-  zzfx(...[1.5,0,146,,3,3,4,2.9,,-2,,.72,,,,.1,.03,.02,,,-1468]); 
-}, 9000);
+  bgst.push(setTimeout(a, 10000));
+};
+
+bgst.push(setTimeout(a, 10000));
+
+const b = () => {
+  zzfx(...[1.25,0,146,,3,3,4,2.9,,-2,,.72,,,,.1,.03,.02,,,-1468]); 
+  bgst.push(setTimeout(b, 9000));
+};
+
+bgst.push(setTimeout(b, 9000));
 }
 
 
@@ -336,13 +344,12 @@ return paragraphs;
 
 
 /* Towny custom element */
-
 const scale = ["💀", "😱", "😨", "😞", "😟", "😕", "😐", "🙂", "😇"];
 
 const randBet = (min, max) => Math.random() * max + min;
 const randStyle = () => {
   const zfont = randBet(2, 30);
-  const top = zfont * zfont * 0.07;
+  const top = zfont * zfont * 0.06;
   return `font-size: ${zfont }vw; z-index: ${~~(top)}; left: ${randBet(
     -2,
     60
@@ -493,7 +500,7 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
     towny.classList.add('heal');
     a.mood += 1;
     towny.style.background = '#ccc';
-    zzfx(...[,,527,,.06,.14,,,,,44,.04,.02,,,,,.58,.01]); 
+    zzfx(...[,,527,,.06,.14,,,,,44,.04,.02,,,,,.58,.01]);
     towny.style.animation = '0.25s linear vibrate-1 3';
     towny.innerHTML = '';
     towny.appendChild(descrip());
@@ -647,7 +654,7 @@ const hexHolder = div({class: "gameBoard grid__item"});
 const hpHolder = div({id: 'hp', class: "score grid__item", turnsLeft: '13'});
 
 const ending = () => {  
-  timeouts.forEach(a => clearTimeout(a));
+  timeouts.concat(bgst).forEach(a => clearTimeout(a));
   window.speechSynthesis.cancel();
   hexHolder.innerHTML = '';
   hpHolder.innerHTML = '';
@@ -657,6 +664,7 @@ const ending = () => {
 
   if (survive === 0) {
     // Sad ending
+    town.innerHTML = "";
     const msg = 'The 13 have perished.';
     van.add(hexHolder, div({class: 'ending'},msg));
     speak(msg);
@@ -680,8 +688,9 @@ const ending = () => {
 
 const makeCards = (holder) => {
   round += 1;
-  hint += 1;
+  hint += 1.5;
   appearanceOf13 += 0.02;
+  const randos = townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, collected);
   van.add(holder, div({id: "choices"},
   div({id: "rando", class: "c-cho", onclick: () => {
     /* Rando select help collected number */
@@ -690,12 +699,11 @@ const makeCards = (holder) => {
     hpHolder.innerHTML = '';
 
     startSpell(() => {
-      const randos = townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, collected);
       randos.forEach(a => setTimeout(a.heal, ~~(Math.random() * 1500)));
 
       setTimeout(() => {
         hpHolder.setAttribute('turnsLeft', 13 - round);
-        if (round > 0 && townys.filter(a => a.mood > 0).length > 0) {
+        if (round < 13 && townys.filter(a => a.mood > 0).length > 0) {
           makeBoard(hexHolder);
           makeClock(hexHolder,  pacing);
         } else {
@@ -708,7 +716,7 @@ const makeCards = (holder) => {
       "Random",
     ),
     div({class: "gig"},
-      collected,
+      randos.length,
     ),
     div(
       "People",
@@ -790,6 +798,9 @@ const makeCards = (holder) => {
 const makeHP = () => {
   const pairs = span({id: 'h-pair'}, collected);
   hpHolder.innerHTML = '';
+  if (collected == 2) {
+    zzfx(...[,,1623,.01,,.17,,.5,,1,459,.07,,,,,,.84,.02]); 
+  }
   hpHolder.appendChild(div({id: 'h-arr', class:  collected >= 2 ? 'ok': '',
     onclick: () => {
       if (collected < 2) {
@@ -924,9 +935,10 @@ const makeBoard = (holder) => {
   );
 
   const hide = size[0] * size[1] * 0.5;
-  const hidden = [... document.querySelectorAll('.hex.hide')].sort(() => Math.random() - 0.5);
+  let hidden = [... document.querySelectorAll('.hex.hide')].sort(() => Math.random() - 0.5);
   for(let i = 0; i < hide; i++){
     setTimeout(() => {
+      hidden = hidden.sort(() => Math.random() - 0.5);
       hidden.pop().classList.remove('hide');
     }, i* 50)
   }
@@ -971,7 +983,7 @@ const makeClock = (holder, pace = 1300) => {
                 hexHolder.innerHTML = '';
                 speak('time is up');
                 pacing *= helpPacing;
-                const hurters = 3 + ~~(Math.random() * 6);
+                const hurters = 7 + ~~(Math.random() * 5);
                 townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, hurters).forEach(a => setTimeout(a.hurt, ~~(Math.random() * 600)));
                 zzfx(...[0.0002,0,298,.13,1,,,.7,,-1,-44,.05,.2,,,,.3,,.01,8000]);
                 [...document.querySelectorAll('.cl-arrow')].forEach(a => a.remove());
@@ -1006,7 +1018,7 @@ const instruction = () => {
   const instructions = [
     'Flip the hexagons and make at least two pairs to heal our people.',
     'Finding "13" causes harm.',
-    'Click "Healing Pairs" before a spider makes it back up top.',
+    'Click "Healing Pairs" before a 🕷️ makes it back up top.',
     "Survive 13 quick rounds."
   ];
 
@@ -1023,16 +1035,16 @@ const instruction = () => {
   };
 
   speakAndActivate(oneDiv, instructions[0], 0);
-  speakAndActivate(twoDiv, instructions[1], 3000);
-  setTimeout(() => zzfx(...ouchSound), 3600);
-  setTimeout(() => makeBoard(hexHolder), 3600);
-  speakAndActivate(threeDiv, instructions[2], 5400);
+  setTimeout(() => makeBoard(hexHolder), 3000);
+  speakAndActivate(twoDiv, instructions[1], 4000);
+  setTimeout(() => zzfx(...ouchSound), 4600);
+  speakAndActivate(threeDiv, instructions[2], 6400);
 
   [...new Array(3)].forEach((_, i) => {
     setTimeout(() => zzfx(...warningSound), 7000 + i * 400);
   });
 
-  speakAndActivate(fourDiv, instructions[3], 9200);
+  speakAndActivate(fourDiv, instructions[3], 10200);
 
   setTimeout(() => {
     spells.innerHTML = '';
@@ -1040,7 +1052,7 @@ const instruction = () => {
     makeClock(hexHolder, pacing);
     zzfx(...[0.0002, 0, 298, .13, 1, , , .7, , -1, -44, .05, .2, , , , .3, , .01, 8000]);
     document.body.style.pointerEvents = 'auto';
-  }, 11000);
+  }, 13000);
 };
 
 
@@ -1066,9 +1078,8 @@ const instruction = () => {
     div({class: "img"}, houseLine),
   );
 
-  // bgs();
-
   starter.onclick = () => {
+    bgs();
     makeTownies();
     document.body.style.pointerEvents = 'none';
     starter.classList.add('remove');
@@ -1089,28 +1100,18 @@ van.add(document.body, div({class: "board"},
   spells,
 ), starter);
 
-let accepting = true;
-const reporterfn = (force) => {
-  if (!accepting) {
+let accepting;
+const reporterfn = () => {
+  if (accepting) {
+    setTimeout(() => {
+      clearTimeout(accepting);
+      accepting = null;
+    }, 2000);
     return;
   }
-  accepting = false;
-  setTimeout(() => {accepting = true}, 2000);
+  
+  accepting = setTimeout(() => {
   const focus = townys.filter(a => a.mood > 0).sort((a, b) => a.mood - b.mood).slice(0, 3).sort(() => Math.random() - 0.5)[0];
-  if (!force) {
-    if (round < 2) { 
-      setTimeout(reporterfn, 15000);
-      return;
-    } else {
-      setTimeout(reporterfn, Math.random() * 150 * pacing * 20);
-    }
-  
-    if (focus.mood <= 0) {
-      return;
-    }
-  
-  }
-
   const reporter = document.getElementById(focus.id);
   if (!reporter) return;
   const ostyle = {};
@@ -1153,6 +1154,7 @@ setTimeout(() => {
   }, 2000);
 });
 return reporter;
+});
 }
 
  const hideStarter = () => {

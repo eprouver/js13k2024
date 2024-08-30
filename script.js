@@ -235,7 +235,7 @@ enVoices = window.speechSynthesis.getVoices();
   return;
 }
 incVoices = incVoices.filter((voice) => ["sk-SK"].indexOf(voice.lang) > -1);
-enVoices = enVoices.filter((voice) => ["en-IN"].indexOf(voice.lang) > -1);
+enVoices = enVoices.filter((voice) => ["en-GB"].indexOf(voice.lang) > -1);
 
 if (enVoices.length === 0) {
   enVoices = window.speechSynthesis.getVoices();
@@ -586,6 +586,8 @@ const reposition = () => {
   [...document.getElementsByClassName("face")].forEach((face) => {
     face.style = randStyle();
   });
+
+  bgst.push(setTimeout(reposition, 100000));
 }
 
 
@@ -697,7 +699,7 @@ const ending = () => {
 const makeCards = (holder) => {
   round += 1;
   hint += 1.5;
-  appearanceOf13 += 0.02;
+  appearanceOf13 += 0.015;
   const randos = townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, collected);
   van.add(holder, div({id: "choices"},
   div({id: "rando", class: "c-cho", onclick: () => {
@@ -992,7 +994,7 @@ const makeClock = (holder, pace = 1300) => {
                 document.getElementById('h-arr').remove();
                 speak('time is up');
                 pacing *= helpPacing;
-                const hurters = 7 + ~~(Math.random() * 5);
+                const hurters = 5 + ~~(Math.random() * 8);
                 townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, hurters).forEach(a => setTimeout(a.hurt, ~~(Math.random() * 600)));
                 zzfx(...[0.0002,0,298,.13,1,,,.7,,-1,-44,.05,.2,,,,.3,,.01,8000]);
                 [...document.querySelectorAll('.cl-arrow')].forEach(a => a.remove());
@@ -1173,5 +1175,5 @@ return reporter;
   document.querySelector('.starter').remove();
  }
 
- setInterval( reposition, 100000);
+ bgst.push(setTimeout( reposition, 100000));
 

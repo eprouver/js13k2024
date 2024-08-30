@@ -13,7 +13,7 @@ body {
   overflow: hidden;
 }
 
-body, html, .hex-holder, .board {
+body, html, .board, .starter {
   overflow: hidden;
 }
 
@@ -335,6 +335,7 @@ grid-template-rows: 1fr 10fr;
 .land svg {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* end starter */

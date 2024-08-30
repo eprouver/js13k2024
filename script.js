@@ -1087,6 +1087,7 @@ const instruction = () => {
     starter.classList.add('remove');
     setTimeout(() => {
       instruction();
+      starter.remove();
     }, 1600);
   }
 

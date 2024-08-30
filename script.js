@@ -235,7 +235,7 @@ enVoices = window.speechSynthesis.getVoices();
   return;
 }
 incVoices = incVoices.filter((voice) => ["sk-SK"].indexOf(voice.lang) > -1);
-enVoices = enVoices.filter((voice) => ["en-GB"].indexOf(voice.lang) > -1);
+enVoices = enVoices.filter((voice) => ["en-IE"].indexOf(voice.lang) > -1);
 
 if (enVoices.length === 0) {
   enVoices = window.speechSynthesis.getVoices();
@@ -828,7 +828,7 @@ const makeHP = () => {
   ));
 }
 
-const icons = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚫', '⚪'];
+const icons = ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪'];
 
 const makeSmudge = () => {
   const holder = document.getElementById("defs");
@@ -849,7 +849,7 @@ const makeSmudge = () => {
     // Create the <feDisplacementMap> element
     const feDisplacementMap = document.createElementNS(svgNS, "feDisplacementMap");
     feDisplacementMap.setAttribute("in", "SourceGraphic");
-    feDisplacementMap.setAttribute("scale", "50");
+    feDisplacementMap.setAttribute("scale", "80");
     
     // Append <feTurbulence> and <feDisplacementMap> to the <filter> element
     filter.appendChild(feTurbulence);
@@ -994,7 +994,7 @@ const makeClock = (holder, pace = 1300) => {
                 document.getElementById('h-arr').remove();
                 speak('time is up');
                 pacing *= helpPacing;
-                const hurters = 5 + ~~(Math.random() * 8);
+                const hurters = 4 + ~~(Math.random() * 5);
                 townys.filter(a => a.mood > 0).sort(() => Math.random() - 0.5).slice(0, hurters).forEach(a => setTimeout(a.hurt, ~~(Math.random() * 600)));
                 zzfx(...[0.0002,0,298,.13,1,,,.7,,-1,-44,.05,.2,,,,.3,,.01,8000]);
                 [...document.querySelectorAll('.cl-arrow')].forEach(a => a.remove());

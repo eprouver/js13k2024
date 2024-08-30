@@ -123,7 +123,7 @@ grid-template-rows: 1fr 10fr;
 }
 
 .towny {
-  padding: 2px;
+  padding: 0.1vh;
   box-shadow: inset 0 0 10px #000;
   background: #555;
   filter: brightness(0.85);
@@ -169,6 +169,7 @@ grid-template-rows: 1fr 10fr;
   justify-content: space-around;
   align-items: center;
   cursor: pointer;
+  font-size: 1.8vh;
 }
 
 .strike {
@@ -178,13 +179,13 @@ grid-template-rows: 1fr 10fr;
 }
 
 .range {
-  font-size: 0.5em;
+  font-size: 0.45em;
   margin: 1em 0;
   letter-spacing: 0.1em;
 }
 
 .vis {
-  font-size: 4.8vh;
+  font-size: 5vh;
   position: relative;
 }
 
@@ -196,12 +197,13 @@ grid-template-rows: 1fr 10fr;
 }
 
 .town-list {
-  height: 100%;
+  height: 99%;
   overflow: scroll;
   filter: saturate(0.25);
   box-shadow: inset 0 0 30vw #cccc;
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
   gap: 5px;
   padding: 5px;
 }

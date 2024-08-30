@@ -18,8 +18,9 @@ body, html, .board, .starter {
   height: 100dvh;
   width: 100vw;
   overflow: hidden;
-  position: sticky;
+  position: absolute;
   top: 0;
+  left: 0;
 }
 
 #noise {

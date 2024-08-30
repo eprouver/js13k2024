@@ -6,6 +6,8 @@
   font-family: georgia;
 }
 
+
+
 body {
   background: linear-gradient(359deg, black, #4b4b4b);
   height: 100vh;
@@ -14,6 +16,7 @@ body {
 }
 
 body, html, .board, .starter {
+  height: 100%;
   overflow: hidden;
 }
 

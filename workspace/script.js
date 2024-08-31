@@ -56,7 +56,7 @@ let pacing = 1000;
 let timeouts = [];
 let round = 0;
 let hint = 0;
-let appearanceOf13 = 0.1;
+let appearanceOf13 = 0.15;
 
 
 const reducePacing = 0.75; /* reduce the total round time */
@@ -536,7 +536,7 @@ townys.sort((a,b) => b.mood - a.mood).forEach((a) => {
 
   a.heal = () => {
     towny.classList.add('heal');
-    a.mood += 1;
+    a.mood = Math.min(scale.length -1, a.mood + 1);
     towny.style.background = '#ccc';
     zzfx(...[,,527,,.06,.14,,,,,44,.04,.02,,,,,.58,.01]);
     towny.style.animation = '0.25s linear vibrate-1 3';
